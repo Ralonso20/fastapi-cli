@@ -1,6 +1,7 @@
 import typer
-from src.commands.new_command import new as new_command
+
 from src.commands.hello_command import app as hello
+from src.commands.new_command import new as new_command
 
 cli = typer.Typer()
 

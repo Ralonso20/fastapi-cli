@@ -5,3 +5,4 @@ uvicorn[standard]==0.29.0
 pre-commit==3.7.1
 pytest==8.2.1
 ruff==0.4.5
+isort==5.13.2
