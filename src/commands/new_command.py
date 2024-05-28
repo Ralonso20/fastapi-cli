@@ -15,10 +15,6 @@ def create_file(path: str, content: str):
     console.print(f"Archivo creado en: [bold blue]{path}[/]")
 
 
-# @app.command(
-#     help="Crea una nueva aplicación FastAPI con la estructura de directorios y archivos necesarios",
-#     name="new",
-# )
 def new(app_name: str):
     # Crear el directorio de la aplicación
     app_dir = os.path.join(os.getcwd(), app_name)
@@ -36,10 +32,6 @@ def new(app_name: str):
     # Crear la estructura de directorios
     dirs_to_create = [
         "src",
-        "src/controllers",
-        "src/models",
-        "src/services",
-        "src/utils",
         "tests",
     ]
     for directory in dirs_to_create:
@@ -51,13 +43,42 @@ def new(app_name: str):
     main_file = os.path.join(app_dir, "src", "main.py")
     with open(main_file, "w") as f:
         f.write(
-            "from fastapi import FastAPI\n\n"
-            "app = FastAPI()\n\n"
-            "@app.get('/')\n"
-            "async def read_root():\n"
-            "    return {'message': 'Hello, World!'}\n"
+            """
+from fastapi import FastAPI
+from app_controller import router
+app = FastAPI()
+
+# Register routers
+
+app.include_router(router)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+"""
         )
     console.print(f"Archivo principal de FastAPI creado en: [bold blue]{main_file}[/]")
+
+    app_controller_file = os.path.join(app_dir, "src", "app_controller.py")
+    with open(app_controller_file, "w") as f:
+        f.write(
+            "from fastapi import APIRouter, Depends\n\n"
+            "from typing import Annotated\n\n"
+            "from app_services import AppService\n\n"
+            "AppService = Annotated[dict, Depends(AppService)]\n\n"
+            "router = APIRouter()\n\n"
+            "@router.get('/')\n"
+            "async def read_root(app_service: AppService):\n"
+            "    return {'message': 'Hello, World!'}\n"
+        )
+
+    app_services_file = os.path.join(app_dir, "src", "app_services.py")
+    with open(app_services_file, "w") as f:
+        f.write(
+            "class AppService:\n"
+            "    def get_message(self):\n"
+            "        return {'message': 'Hello, World!'}\n"
+        )
 
     # Crear archivos de configuración
     pre_commit_file = os.path.join(app_dir, ".pre-commit-config.yaml")
