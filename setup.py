@@ -13,6 +13,7 @@ setup(
         "pre-commit",
         "pytest",
         "ruff",
+        "uv",
     ],
     entry_points={"console_scripts": ["fastcli = src.main:cli"]},
 )
